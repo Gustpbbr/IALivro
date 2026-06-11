@@ -1,0 +1,19 @@
+# Credenciais — nunca commitar
+.env
+.env.*
+*.key
+
+# Modelos pesados — moram no storage externo (R2), não no Git
+*.safetensors
+*.ckpt
+*.pt
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# SO / editor
+.DS_Store
+Thumbs.db
