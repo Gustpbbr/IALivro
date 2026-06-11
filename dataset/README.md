@@ -11,15 +11,20 @@ dataset/
 
 ## O que o autor precisa subir (Fase 1)
 
-Das imagens prontas dos **caps 1–5 do Livro 1**:
+**Tudo, sem curadoria** — pranchas de personagens, cenas dos caps 1–5 e infográficos,
+numa pasta do Google Drive. A triagem é trabalho do agente:
 
-1. **`100_estilo/`** — todas as ilustrações que representam bem o traço da
-   coleção (cenas, cenários, grupos). Quanto mais variadas, melhor.
-2. **`200_joao/`** — 10–20 imagens do João em poses, ângulos, roupas e fundos
-   diferentes. Variedade evita que o modelo "grude" roupa/fundo na identidade.
-3. **`201_leonidas_stf/`** — idem para o Leônidas (Leão do STF).
+| Material | Destino no dataset |
+|---|---|
+| **Pranchas de personagem** (vistas + detalhes + paletas) | Fatiadas via script (Pillow): vistas frente/3-4/perfil e close-ups viram imagens de treino do personagem; caixas de texto ficam de fora. Os textos das pranchas alimentam as captions |
+| **Cenas completas** (João no horizonte, árvore da Constituição…) | `100_estilo/` — ensinam luz, cerrado, concreto, atmosfera |
+| **Personagens nítidos dentro de cenas** | Recortados para o dataset do personagem — só se o recorte tiver resolução decente; figurantes minúsculos/de costas ficam de fora (viram ruído) |
+| **Infográficos com muito texto/setas** | Fora do treino (ou só regiões limpas recortadas) — texto embutido ensina o modelo a gerar "letras fantasmas" |
+| **Paletas hexadecimais** | Não vão pro treino: o diretor de arte as traduz em descrições de cor no prompt, e o QA as usa para conferir as cores das imagens geradas |
 
-A mesma imagem pode aparecer em mais de uma pasta se servir aos dois propósitos.
+O que faltar de variedade por personagem (ângulos, expressões) será **fabricado**
+com modelo de edição por referência (Qwen-Image-Edit / Nano Banana) a partir das
+vistas das pranchas — meta de 25–30 imagens por personagem treinado.
 
 ## Captions (legendas)
 

@@ -83,6 +83,14 @@ consistência, gastando ~US$ 10. Sem construir app ainda.
 > Nesta fase **não há servidor ligado** — você (agente) dispara o treino/geração
 > via API e salva os resultados no repo. Custo de hospedagem = zero.
 
+## Decisões de produto (alinhamento com o autor — em andamento)
+
+- **Variações por cena** (11/06/2026): cada pedido gera múltiplas opções de imagem
+  para o autor escolher, não uma única. (Quantidade padrão a definir; impacta custo
+  por cena: ~US$ 0,02–0,035 × nº de variações.)
+- Em aberto: forma de interação (texto livre vs estruturado), volume por capítulo,
+  formato/resolução final (impresso vs e-book), outros usuários além do autor.
+
 ## FASE 2 — Interface (o "ChatGPT ilustrador")
 
 1. **Backend** (Python) que recebe o texto, chama o "diretor de arte" (LLM) para
