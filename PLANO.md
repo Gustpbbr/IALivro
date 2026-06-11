@@ -156,8 +156,10 @@ consistência, gastando ~US$ 10. Sem construir app ainda.
 
 1. **Feedback 👍/👎** por imagem → pastas `/feedback/positivo` e `/negativo`.
    Positivos acumulados realimentam re-treinos; negativos viram prompt negativo.
-2. **Referências arrastáveis (IP-Adapter):** o autor solta uma textura/cenário e a
-   IA usa como referência visual (sem copiar).
+2. **Referências arrastáveis:** o autor solta uma textura/cenário e a IA usa como
+   referência visual (sem copiar) — via modelos de edição/geração por referência
+   atuais (FLUX.2 multi-ref / Nano Banana / Qwen-Edit; o antigo IP-Adapter saiu
+   das recomendações em 2026).
 3. **Correção pontual (inpainting):** corrigir um pedaço da imagem (letra errada,
    detalhe) sem regenerar tudo.
 4. **Dataset vivo:** novas pastas (`150_taverna_capX/`) + botão "Atualizar IA".
