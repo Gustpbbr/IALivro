@@ -117,7 +117,11 @@ consistência, gastando ~US$ 10. Sem construir app ainda.
   — altera só o trecho errado mantendo o resto intacto. **Promovida da Fase 4
   para a interface da Fase 2** (botão "Corrigir" ao lado de cada variação).
 - **Volume por capítulo: variável** conforme o conteúdo — sistema por demanda.
-- Em aberto: outros usuários além do autor.
+- **Usuário único: só o autor** (11/06/2026). Sem cadastro/multiusuário na
+  interface — apenas proteção simples de acesso (a instância no Railway não
+  pode ficar aberta para a internet).
+
+> ✅ **Alinhamento de produto concluído em 11/06/2026.**
 
 ## FASE 2 — Interface (o "ChatGPT ilustrador")
 
