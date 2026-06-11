@@ -120,6 +120,13 @@ consistência, gastando ~US$ 10. Sem construir app ainda.
 - **Usuário único: só o autor** (11/06/2026). Sem cadastro/multiusuário na
   interface — apenas proteção simples de acesso (a instância no Railway não
   pode ficar aberta para a internet).
+- **Interface mobile-first** (11/06/2026): o autor opera o sistema pelo
+  **celular** no dia a dia (tablet só para o produto final). Layout para tela
+  estreita: variações empilhadas/deslizáveis, botões grandes de aprovar/corrigir.
+- **Modo rascunho vs final — avaliar na Fase 1** (11/06/2026): iterar
+  composição/enquadramento com FLUX schnell (~US$ 0,003/img) e gerar a versão
+  final com FLUX dev (~US$ 0,025–0,035). Validar se os LoRAs rendem bem no
+  schnell antes de adotar.
 
 > ✅ **Alinhamento de produto concluído em 11/06/2026.**
 
