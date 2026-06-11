@@ -88,8 +88,25 @@ consistência, gastando ~US$ 10. Sem construir app ainda.
 - **Variações por cena** (11/06/2026): cada pedido gera múltiplas opções de imagem
   para o autor escolher, não uma única. (Quantidade padrão a definir; impacta custo
   por cena: ~US$ 0,02–0,035 × nº de variações.)
-- Em aberto: forma de interação (texto livre vs estruturado), volume por capítulo,
-  formato/resolução final (impresso vs e-book), outros usuários além do autor.
+- **Destino: livro digital em HTML, tablet Samsung em modo retrato** (11/06/2026).
+  Coluna de texto de 650px (CSS do projeto-mãe). Sem requisitos de impressão.
+- **4 perfis de enquadramento** (11/06/2026), nas resoluções nativas do FLUX:
+  | Perfil | Resolução de geração |
+  |---|---|
+  | Tela cheia (retrato) | 896×1440 (alt. 832×1216) |
+  | Meia página (paisagem) | 1216×832 |
+  | Bloco lateral | 1024×1024 ou 768×1024 |
+  | Vinheta panorâmica | 1440×640 (proporção extrema — validar na Fase 1) |
+
+  **Upscale 2x só na variação aprovada** antes de exportar (telas de tablet são
+  high-DPI; gerar em ~1MP onde o FLUX rende melhor e ampliar a vencedora).
+  A interface (Fase 2) terá menu de perfis travando width×height.
+- **Fase 3**: os capítulos existem como HTML estruturado no projeto-mãe — o
+  pipeline de lote pode ler o HTML para identificar cenas-chave e o perfil de
+  enquadramento de cada imagem.
+- Em aberto: nº padrão de variações, forma de interação (texto livre vs
+  estruturado), volume por capítulo, tratamento de texto sobre imagem (HTML
+  sobreposto vs texto embutido), outros usuários além do autor.
 
 ## FASE 2 — Interface (o "ChatGPT ilustrador")
 
