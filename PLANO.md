@@ -104,9 +104,20 @@ consistência, gastando ~US$ 10. Sem construir app ainda.
 - **Fase 3**: os capítulos existem como HTML estruturado no projeto-mãe — o
   pipeline de lote pode ler o HTML para identificar cenas-chave e o perfil de
   enquadramento de cada imagem.
-- Em aberto: nº padrão de variações, forma de interação (texto livre vs
-  estruturado), volume por capítulo, tratamento de texto sobre imagem (HTML
-  sobreposto vs texto embutido), outros usuários além do autor.
+- **2 variações por cena** como padrão (11/06/2026) — custo ~US$ 0,04–0,07/cena.
+- **Texto embutido na imagem (fixo), não HTML sobreposto** (11/06/2026): as
+  imagens vivem em boxes fixos no layout; texto reescalável vazaria do box.
+  Imagens com texto (placas, títulos, brasões) são geradas/finalizadas com
+  Nano Banana Pro/Ideogram + QA letra a letra.
+- **Interação pelas duas vias** (11/06/2026): colar o trecho do capítulo (o
+  diretor de arte identifica cena/personagens/enquadramento) OU pedido dirigido
+  ("cap. 6, João + Leônidas no plenário, meia página"). Mesmo motor, duas entradas.
+- **Correção sobre a imagem aprovada** (11/06/2026): edição por
+  inpainting/referência (FLUX Kontext / Qwen-Image-Edit / Nano Banana via fal.ai)
+  — altera só o trecho errado mantendo o resto intacto. **Promovida da Fase 4
+  para a interface da Fase 2** (botão "Corrigir" ao lado de cada variação).
+- **Volume por capítulo: variável** conforme o conteúdo — sistema por demanda.
+- Em aberto: outros usuários além do autor.
 
 ## FASE 2 — Interface (o "ChatGPT ilustrador")
 
