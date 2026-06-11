@@ -91,6 +91,8 @@ consistência, gastando ~US$ 10. Sem construir app ainda.
    suficiente para trecho→prompt, por uma fração do custo do Fable 5).
 2. **Interface de chat** (Gradio/Streamlit para começar — simples; ou frontend
    Vercel depois). Barra lateral para escolher personagem em cena e peso do estilo.
+   Backlog: **painel de ajustes finos** (brilho, saturação, temperatura) rodando no
+   navegador — corrige tonalidade sem re-gerar a imagem (custo zero de API).
 3. **Hospedagem:** reaproveitar a conta **Railway** do autor (ver `INFRAESTRUTURA.md`).
    Padrão Dockerfile/FastAPI do projeto Gus transplanta direto.
 4. **Storage:** imagens e modelos no **Cloudflare R2**.
@@ -119,6 +121,23 @@ consistência, gastando ~US$ 10. Sem construir app ainda.
 3. **Correção pontual (inpainting):** corrigir um pedaço da imagem (letra errada,
    detalhe) sem regenerar tudo.
 4. **Dataset vivo:** novas pastas (`150_taverna_capX/`) + botão "Atualizar IA".
+
+---
+
+## Práticas de engenharia adotadas (11/06/2026)
+
+- **Plano antes de código**: mudanças relevantes são propostas e aprovadas pelo
+  autor antes da execução (já é o fluxo do Claude Code).
+- **Testes no backend (Fase 2)**: `pytest` cobrindo falhas de API (timeout da
+  fal.ai → mensagem amigável, nunca tela travada). Fase 1 usa validação leve.
+- **Hooks de pre-commit (Fase 2)**: linter/typecheck rodam antes de cada commit.
+- **Bibliotecas**: `fal-client` (assíncrono) para treino/geração; `boto3` com
+  endpoint da Cloudflare para o R2; Gradio/Streamlit com state management no chat.
+- **SEM frameworks de enxame** (Claude Flow/LangGraph/CrewAI) e **sem skills de
+  terceiros** (ex.: "superpowers"): os papéis (historiador do universo, diretor de
+  arte, crítico visual, porteira de gasto) são etapas de um pipeline Python simples;
+  paralelismo usa subagentes nativos do Claude Code. Menos pontos de falha,
+  manutenção mais simples.
 
 ---
 
