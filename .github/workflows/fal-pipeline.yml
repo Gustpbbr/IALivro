@@ -1,0 +1,44 @@
+name: Pipeline fal.ai
+
+# Roda quando um pedido é commitado em training/requests/.
+# Tipos de pedido (arquivo .json): smoke_test | (futuros: treino_lora, geracao)
+# Usa o secret FAL_KEY. Salva resultados em outputs/ e commita.
+on:
+  push:
+    branches: ["claude/greeting-tdg7s3"]
+    paths:
+      - "training/requests/*.json"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  executar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - run: pip install --quiet requests
+
+      - name: Processar pedidos
+        env:
+          FAL_KEY: ${{ secrets.FAL_KEY }}
+        run: python training/processar_pedidos.py
+
+      - name: Commit e push dos resultados
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add outputs/ training/requests/
+          if git diff --cached --quiet; then
+            echo "Nada novo."
+            exit 0
+          fi
+          git commit -m "Resultados do pipeline fal.ai (workflow)"
+          git pull --rebase origin claude/greeting-tdg7s3
+          git push origin HEAD:claude/greeting-tdg7s3
