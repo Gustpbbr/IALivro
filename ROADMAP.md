@@ -53,8 +53,8 @@
 
 ## ETAPA 3 — Treino piloto e validação (Fase 1 do PLANO) ⬜ ~US$ 10–15
 
-- [ ] Smoke test da FAL_KEY (1 imagem, ~US$ 0,03)
-- [ ] Workflow de treino via GitHub Actions (mesma arquitetura da importação)
+- [x] Smoke test da FAL_KEY ✅ (12/06 — `outputs/smoke_test_templo.png`, circuito GitHub→fal→repo validado)
+- [x] Workflow de treino/geração via GitHub Actions ✅ (12/06 — `fal-pipeline.yml`, tipo smoke_test; tipos treino_lora/geracao a adicionar)
 - [ ] Treinar LoRA de estilo (~US$ 2–3) → gerar testes → QA por vision + autor
 - [ ] Treinar LoRAs João e Leônidas (~US$ 4–6) → testes de consistência
 - [ ] A/B: FLUX.1-dev vs FLUX.2; modo rascunho (schnell) vs final (dev)
