@@ -1,0 +1,63 @@
+name: Importar imagens do Google Drive
+
+# Roda quando o manifest ou este workflow mudam na branch de trabalho.
+# Baixa cada arquivo listado em dataset/_inbox/manifest.tsv (Drive público
+# por link) e commita em dataset/_inbox/<subpasta>/.
+on:
+  push:
+    branches: ["claude/greeting-tdg7s3"]
+    paths:
+      - "dataset/_inbox/manifest.tsv"
+      - ".github/workflows/import-drive.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  importar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instalar gdown
+        run: pip install --quiet gdown
+
+      - name: Baixar arquivos do manifest
+        run: |
+          set -u
+          falhas=0
+          while IFS=$'\t' read -r id subdir nome; do
+            [ -z "${id}" ] && continue
+            case "${id}" in \#*) continue ;; esac
+            destino="dataset/_inbox/${subdir}/${nome}"
+            if [ -f "${destino}" ]; then
+              echo "Já existe, pulando: ${destino}"
+              continue
+            fi
+            mkdir -p "dataset/_inbox/${subdir}"
+            echo "Baixando ${nome} ..."
+            if ! gdown "https://drive.google.com/uc?id=${id}" -O "${destino}"; then
+              echo "::warning::Falha ao baixar ${id} (${nome})"
+              rm -f "${destino}"
+              falhas=$((falhas+1))
+            fi
+          done < dataset/_inbox/manifest.tsv
+          echo "Falhas: ${falhas}"
+
+      - name: Commit e push das imagens
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add dataset/_inbox
+          if git diff --cached --quiet; then
+            echo "Nada novo para commitar."
+            exit 0
+          fi
+          git commit -m "Importa imagens do Google Drive via workflow"
+          git pull --rebase origin claude/greeting-tdg7s3
+          git push origin HEAD:claude/greeting-tdg7s3
