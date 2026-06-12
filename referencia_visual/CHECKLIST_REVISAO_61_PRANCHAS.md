@@ -7,9 +7,20 @@
 
 ## A. Acrescentar em TODAS as fichas
 
+0. **Formato em DUAS pranchas por personagem** (decidido 12/06/2026, após o
+   piloto do Dimas — a prancha única fica lotada e os painéis pequenos geram
+   recortes de baixa resolução para o dataset):
+   - **PRANCHA A — Identidade institucional**: cabeçalho, identificação, 5
+     vistas, paleta, símbolo, elementos de trabalho, texturas, detalhes,
+     missão/atributos/valores, aplicações (o formato atual).
+   - **PRANCHA B — Performance**: EXPRESSÕES (4 close-ups grandes de rosto) +
+     POSES DE AÇÃO (2, corpo inteiro) + TRAJE ALTERNATIVO (se figurino
+     variável) — painéis GRANDES, fundo neutro, mesma direção de renderização.
 1. **SEÇÃO 0 — DIREÇÃO DE RENDERIZAÇÃO**: bloco padrão **idêntico palavra por
    palavra** em todas (copiar do modelo da Sofia), mudando apenas a 1ª linha
-   (espécie). É o que garante que o LoRA aprenda UM estilo, não uma mistura.
+   (espécie) **+ no máximo 1 linha extra específica da espécie** (ex.: "sem
+   nenhum traço de primata ou humano no rosto: crânio, focinho e olhos 100%
+   caninos" — validado no piloto do Dimas). O núcleo permanece idêntico nas 61.
    - Conteúdo-chave: hiper-realista; 90% animal / 10% antropomorfização; sem
      cartoon/mascote/animação infantil; pelagem/plumagem fio a fio; wildlife
      photography + creature design AAA; materialidade física real; iluminação
@@ -34,8 +45,21 @@
    livros, incluir 1 vista com traje alternativo.
 4. **SEÇÃO EXPRESSÕES** — 4 close-ups de rosto: neutra/padrão, positiva,
    preocupada/empática, firme/severa (adaptar nomes à personalidade).
+   → **Renderizar na PRANCHA B**, em painéis grandes.
 5. **SEÇÃO POSES DE AÇÃO** — 2 poses de corpo inteiro além do turnaround
    (uma da função típica + uma de movimento), fundo neutro.
+   → **Renderizar na PRANCHA B**, em painéis grandes.
+
+## A.1 QA pós-geração (conferir a imagem contra a ficha, antes de aprovar)
+
+Divergências reais encontradas no piloto do Dimas — checar em toda geração:
+- [ ] **Cabeçalho sem Tier** (o gerador herdou "Tier 2" da prancha-modelo antiga;
+      todos são T1 e o campo foi removido das fichas)
+- [ ] Painéis de EXPRESSÕES e POSES presentes (na Prancha B)
+- [ ] Nº de texturas/detalhes igual ao da ficha
+- [ ] Objetos restritos ao lugar certo (ex.: viatura só nas aplicações, nunca
+      nas vistas)
+- [ ] Nome, grupo e metadados idênticos aos da ficha (LISTA_FINAL)
 
 ## B. Padronizar em TODAS as fichas
 

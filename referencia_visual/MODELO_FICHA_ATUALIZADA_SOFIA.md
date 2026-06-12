@@ -76,6 +76,10 @@ art. 134, 5 aplicações institucionais.)*
 
 # 🆕 SEÇÃO NOVA — EXPRESSÕES (4 close-ups de rosto)
 
+> ⚠️ Expressões, poses de ação e traje alternativo são renderizados numa
+> **PRANCHA B (Performance)** separada, em painéis grandes — a Prancha A
+> (identidade institucional) mantém o formato atual. Ver checklist, item 0.
+
 | # | Expressão | Descrição |
 |---|---|---|
 | 1 | **Serena (padrão)** | Olhar de escuta, leve inclinação de cabeça |
