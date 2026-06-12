@@ -13,8 +13,12 @@
    - Conteúdo-chave: hiper-realista; 90% animal / 10% antropomorfização; sem
      cartoon/mascote/animação infantil; pelagem/plumagem fio a fio; wildlife
      photography + creature design AAA; materialidade física real; iluminação
-     editorial premium; **fundo neutro nas vistas e close-ups**; referência de
-     pipeline: prancha do Leônidas.
+     editorial premium; **fundo neutro nas vistas e close-ups**.
+   - **Referência por ANEXO, não por nome**: o autor sempre anexa 1–2 pranchas
+     aprovadas como guia ao gerar. Renomear esses arquivos para
+     `PRANCHA_MODELO_01.png`, `PRANCHA_MODELO_02.png`… e o bloco de prompt
+     referencia "as pranchas-modelo anexadas" (nunca "igual ao Leônidas" — o
+     gerador não conhece os personagens por nome, só vê os anexos).
    - **Exceção — Quarteto pop-up** (Veríssimo, Lúcia, Lúmen, Nexus): bloco
      CARTOON próprio (declarar explicitamente: estilo cartoon 2D vivo, cores
      chapadas vibrantes, contorno definido, quebra da quarta parede), também

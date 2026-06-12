@@ -29,7 +29,9 @@ Qualidade: wildlife photography + creature design de estúdio AAA.
 Aparência de animal vivo fotografado em estúdio editorial.
 Materialidade física real: pena, tecido, metal e papel com comportamento físico crível.
 Iluminação editorial premium. Estética de bíblia visual oficial de estúdio AAA.
-Referência de qualidade e pipeline: prancha do Leônidas Constitucional (STF).
+Referência de estilo e pipeline: as PRANCHAS-MODELO ANEXADAS a esta conversa
+(arquivos nomeados PRANCHA_MODELO_01.png, PRANCHA_MODELO_02.png…).
+Replicar delas: o acabamento, a iluminação, a densidade de textura e a diagramação.
 FUNDO das vistas e close-ups: neutro e limpo (branco/cinza-claro), sem cenário.
 ```
 
