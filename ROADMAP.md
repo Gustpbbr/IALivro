@@ -61,6 +61,8 @@
 
 ## ETAPA 4 — Interface (Fase 2 do PLANO) ⬜ ~1–2 semanas de build
 
+- [x] Maquete visual mobile-first (design) ✅ (13/06 — `design/mockup_*.png`); aguarda feedback do autor antes do build funcional
+
 - [ ] Backend Python (FastAPI): diretor de arte (Opus/Sonnet via chave existente)
       → prompt técnico → fal.ai → 2 variações
 - [ ] Interface mobile-first (Gradio/Streamlit): colar trecho OU pedido dirigido,
