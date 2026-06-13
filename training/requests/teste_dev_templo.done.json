@@ -1,0 +1,8 @@
+{
+  "tipo": "smoke_test",
+  "endpoint": "fal-ai/flux/dev",
+  "num_images": 2,
+  "image_size": {"width": 1216, "height": 832},
+  "_rerun": "workflow corrigido",
+  "prompt": "Editorial concept illustration, painterly realism, premium illustrated-book quality. A monumental temple crowning a hill in the Brazilian cerrado of the central plateau, fusing greco-roman fluted columns of pale travertine with tropical modernist exposed concrete. Late-afternoon Brasilia light at 4pm: warm golden sun raking from the right, long hard honest shadows, high natural contrast, clean blue sky with scattered cumulus clouds catching the gold, no cinematic teal-orange grading. A wide ceremonial stone stairway winds up the grassy red-earth slope. A single humble human figure in a straw hat and simple linen clothes, small and seen from behind, climbs the stairs toward the temple, conveying an ordinary citizen approaching the institutions of the Republic. Sparse twisted cerrado trees, dry golden grass, weathered stone and the visible grain of concrete. Monumental yet human in scale, solemn, hopeful and civic in mood. Cinematic composition with depth and atmospheric perspective, rich material detail, sharp focus, professional editorial illustration."
+}
