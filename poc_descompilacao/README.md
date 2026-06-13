@@ -16,8 +16,10 @@ cp .env.example .env
 ## Uso
 
 ```bash
-python descompila.py tests/exemplo_constituicao.png
+python descompila.py tests/imagens/exemplo_constituicao.png
 ```
+
+Imagens versionadas pra teste vão em `tests/imagens/` (no Git). Imagens efêmeras podem ir direto em `tests/` (gitignored).
 
 A saída vai pra `output/`. Cada execução **sobrescreve** a anterior.
 
@@ -28,10 +30,10 @@ A saída vai pra `output/`. Cada execução **sobrescreve** a anterior.
 - [x] Passo 2 — Análise semântica (Claude)
 - [x] Passo 3 — OCR
 - [x] Passo 4 — Reconciliação
-- [ ] Passo 5 — Estilo de texto
-- [ ] Passo 6 — SAM 2
-- [ ] Passo 7 — Inpainting
-- [ ] Passo 8 — Exportação final
+- [x] Passo 5 — Estilo de texto
+- [x] Passo 6 — SAM 2 (implementado, precisa FAL_KEY pra rodar)
+- [x] Passo 7 — Inpainting + máscaras individuais (implementado, precisa FAL_KEY)
+- [x] Passo 8 — Exportação final
 - [ ] Passo 9 — Esquema do JSON congelado
 - [ ] Passo 10 — Validação com mais imagens
 - [ ] Passo 11 — Decisão de porteira
@@ -44,7 +46,8 @@ poc_descompilacao/
 ├── etapas/                # módulos de cada passo
 │   └── __init__.py
 ├── prompts/               # prompts pra Claude
-├── tests/                 # imagens de teste (gitignored)
+├── tests/
+│   └── imagens/           # imagens versionadas pra teste
 ├── output/                # resultados (gitignored)
 ├── requirements.txt
 ├── .env.example
