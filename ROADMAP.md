@@ -41,11 +41,8 @@
 
 ## ETAPA 2 — Preparação do dataset ⬜ (custo zero, agente)
 
-- [ ] Script de fatiamento (Pillow): vistas, expressões, poses e close-ups
-      recortados das pranchas, em alta resolução
-- [ ] Banco de fichas canônicas: leitura das 61 pranchas via vision → descrições
-      estruturadas por personagem (anatomia, paleta, figurino, altura) para o
-      diretor de arte
+- [x] Script de fatiamento (Pillow) ✅ (13/06 — `training/fatiar.py`, engine validada; coords finais no layout v2)
+- [x] Banco de fichas canônicas v1 ✅ (13/06 — `referencia_visual/BANCO_FICHAS_CANONICAS.md`, 61 personagens + alturas + trigger words; reconciliar com LISTA_FINAL)
 - [ ] Captions de treino (.txt) com trigger words canônicas
 - [ ] Dataset de estilo: recortes de arte pura + cenas fabricadas
       (Qwen-Edit/Nano Banana a partir da prancha do Templo) se necessário
