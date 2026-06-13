@@ -43,7 +43,7 @@
 
 - [x] Script de fatiamento (Pillow) ✅ (13/06 — `training/fatiar.py`, engine validada; coords finais no layout v2)
 - [x] Banco de fichas canônicas v1 ✅ (13/06 — `referencia_visual/BANCO_FICHAS_CANONICAS.md`, 61 personagens + alturas + trigger words; reconciliar com LISTA_FINAL)
-- [ ] Captions de treino (.txt) com trigger words canônicas
+- [~] Gerador de captions baseline pronto ✅ (13/06 — `training/gerar_captions.py`); refinamento por imagem com visão quando o dataset real existir
 - [ ] Dataset de estilo: recortes de arte pura + cenas fabricadas
       (Qwen-Edit/Nano Banana a partir da prancha do Templo) se necessário
 - [ ] Montagem final: `dataset/100_estilo/`, `200_joao/`, `201_leonidas_stf/`
@@ -52,6 +52,7 @@
 
 - [x] Smoke test da FAL_KEY ✅ (12/06 — `outputs/smoke_test_templo.png`, circuito GitHub→fal→repo validado)
 - [x] Workflow de treino/geração via GitHub Actions ✅ (12/06 — `fal-pipeline.yml`, tipo smoke_test; tipos treino_lora/geracao a adicionar)
+- [~] Pipeline de treino/geração pronto ✅ (13/06 — tipos treino_lora e geracao em `processar_pedidos.py`, com trava de custo); falta disparar com dataset real
 - [ ] Treinar LoRA de estilo (~US$ 2–3) → gerar testes → QA por vision + autor
 - [ ] Treinar LoRAs João e Leônidas (~US$ 4–6) → testes de consistência
 - [ ] A/B: FLUX.1-dev vs FLUX.2; modo rascunho (schnell) vs final (dev)
