@@ -119,7 +119,8 @@ output/
       "cor_borda": "#c9a961",
       "espessura_borda": 2,
       "raio_canto": 6,
-      "filhos": ["titulo_polmilitar", "texto_polmilitar"]
+      "filhos": ["titulo_polmilitar", "texto_polmilitar"],
+      "mascara": "mascaras/box_polmilitar.png"
     },
     {
       "id": "icone_brasao_pm",

@@ -162,18 +162,39 @@ Ordene por hierarquia visual (título primeiro, fundo por último).
 
 **Critério de OK:** abrir os PNGs e ver o ícone com fundo limpo, sem pedaço cortado.
 
-## Passo 7 — Inpainting do fundo
+## Passo 7 — Inpainting do fundo + máscaras por elemento
 
-**Objetivo:** gerar a versão "fundo limpo" — a cena central sem textos e sem boxes por cima.
+**Objetivo:** gerar a versão "fundo limpo" (cena sem UI) **e** registrar, pra cada box/texto/ícone, a máscara da região que ele cobria. Isso destrava o princípio P3 do `PLANO.md` (apagar tem 3 níveis).
 
 **O que fazer:**
-- Criar máscara unindo todos os bbox de texto + boxes
-- Chamar Fal.ai inpainting (LaMa) com a imagem + máscara
-- Salvar resultado em `output/fundo_limpo.png`
 
-**Saída esperada:** PNG mostrando só cena + cenário, sem texto ou boxes visíveis.
+1. **Máscara global + inpainting:**
+   - Unir todos os bbox de texto + boxes + ícones em uma máscara binária
+   - Chamar Fal.ai inpainting (LaMa) com imagem + máscara
+   - Salvar resultado em `output/fundo_limpo.png`
 
-**Critério de OK:** comparação visual — buracos não óbvios. Aceita-se algumas imperfeições; perfeição vem na Etapa D (polish).
+2. **Máscaras individuais por camada:**
+   - Pra cada camada do tipo `caixa`, `texto` (que esteja FORA de uma caixa) e `icone`, salvar uma máscara PNG (preto/branco) em `output/mascaras/<id_camada>.png`
+   - Essas máscaras são o que o editor vai mandar pro modo 🟡 (refazer fundo) e 🔵 (estender) na Etapa C/D
+   - Camadas dentro de uma caixa não precisam de máscara individual (a caixa cobre tudo)
+
+3. **Atualizar `camadas.json`:** adicionar campo `mascara: "mascaras/<id>.png"` nas camadas relevantes.
+
+**Saída esperada:**
+```
+output/
+├── fundo_limpo.png       ← cena sem UI (modo apagar simples)
+└── mascaras/
+    ├── box_polmilitar.png
+    ├── box_defensoria.png
+    ├── box_como_atuamos.png
+    └── ...
+```
+
+**Critério de OK:**
+- `fundo_limpo.png` sem buracos óbvios na cena central (modo 🟢 vai funcionar)
+- Pelo menos as 5 camadas principais têm máscara individual gerada
+- Costuras visíveis aceitas — Etapa D (polish) refina depois
 
 ## Passo 8 — Exportação final
 
@@ -215,13 +236,19 @@ output/
 
 **Exemplo de propriedades editáveis por tipo:**
 
-| Tipo | Editável |
-|---|---|
-| `texto` | conteúdo, fonte, tamanho, cor, peso, alinhamento, posição |
-| `caixa` | cor de fundo, cor de borda, espessura, raio do canto, posição, tamanho |
-| `icone` | posição, tamanho, rotação, cor (se mono), substituir por outro |
-| `cena` | só posição/escala — edição da cena em si é responsabilidade do ChatGPT (re-gerar) |
-| `linha_divisoria` | cor, espessura, estilo (sólida/tracejada) |
+| Tipo | Editável | Ações de apagar (P3) |
+|---|---|---|
+| `texto` | conteúdo, fonte, tamanho, cor, peso, alinhamento, posição | 🟢 / 🟡 |
+| `caixa` | cor de fundo, cor de borda, espessura, raio do canto, posição, tamanho | 🟢 / 🟡 / 🔵 |
+| `icone` | posição, tamanho, rotação, cor (se mono), substituir por outro | 🟢 / 🟡 |
+| `cena` | só posição/escala — edição da cena em si é responsabilidade do ChatGPT (re-gerar) | — |
+| `linha_divisoria` | cor, espessura, estilo (sólida/tracejada) | 🟢 |
+
+🟢 = apagar simples (revela fundo_limpo)
+🟡 = apagar e refazer fundo via inpainting com prompt
+🔵 = apagar e estender cena via outpainting
+
+(Ver `PLANO.md` → Princípio P3 pra detalhes.)
 
 **Saída esperada:** `ESQUEMA_CAMADAS.md` no repo, revisado pelo autor.
 

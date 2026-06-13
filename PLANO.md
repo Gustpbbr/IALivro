@@ -14,6 +14,61 @@ A geração inicial das imagens **continua sendo feita no ChatGPT**, alimentada 
 
 ---
 
+## Princípios de produto
+
+Decisões de arquitetura que valem pra todas as etapas e amarram o que cada uma precisa entregar.
+
+### P1. Camadas sempre
+
+Texto, boxes, ícones e elementos didáticos **vivem como camadas vetoriais/HTML no editor — nunca como pixels queimados na imagem**. Não importa se vieram de descompilação (Sentido 1) ou foram criados do zero (Sentido 2): dentro do editor são objetos editáveis, e só são re-renderizados sobre o fundo no momento da exportação final.
+
+Consequências:
+- O `camadas.json` é a **fonte da verdade** durante toda a sessão de edição
+- O `fundo_limpo.png` (a cena sem UI) é mantido separado e intocado
+- Texto editado é renderizado por cima na hora de exportar — nunca "colado" no fundo
+
+### P2. Sentido 1 prioritário, Sentido 2 como porta aberta
+
+- **Sentido 1 (descompilação na entrada):** ChatGPT gera imagem completa → upload → IA decompõe → editor → exporta. **Este é o fluxo principal.**
+- **Sentido 2 (composição na saída):** ChatGPT gera só a cena → upload → autor monta boxes/textos do zero no editor → exporta. **Implementação futura; o desenho da Etapa C não pode fechar portas pra isso.**
+
+O esquema do `camadas.json` precisa ser válido tanto pra camadas vindas de decomposição quanto pra camadas criadas do zero.
+
+### P3. Apagar tem três níveis
+
+Quando o autor apaga um box ou elemento no editor, oferecemos três modos de preenchimento:
+
+| Modo | Comportamento | Custo | Quando usar |
+|---|---|---|---|
+| 🟢 **Apagar simples** | Esconde camada, revela `fundo_limpo.png` pré-pronto | grátis, instantâneo | Padrão. Box estava sobre área "calma" (céu, parede, gradiente) |
+| 🟡 **Apagar e refazer fundo** | Chama inpainting com prompt opcional do autor sobre a região do box | ~US$ 0,02, ~5s | Quando o 🟢 deixou costura visível ou o autor quer mudar o que estava embaixo |
+| 🔵 **Apagar e estender cena** | Outpainting pra criar área onde antes não havia cena (cantos vazios, áreas que o box cobria 100%) | ~US$ 0,04, ~10s | Box gigante em canto sem cena, ou quando o autor quer expandir o cenário |
+
+Implicações pra Etapa B:
+- O `fundo_limpo.png` precisa ser **bom o suficiente** pra modo 🟢 funcionar na maioria dos casos
+- A descompilação precisa registrar, pra cada box, **uma máscara da região coberta** (não só o bbox) — pra inpainting/outpainting trabalhar com precisão
+
+Implicações pra Etapa C:
+- Editor precisa expor essas 3 opções ao apagar (menu de contexto ou modal)
+- O modo 🟡 e 🔵 precisam de campo de prompt opcional
+
+### P4. A IA pinta cena, o app desenha UI
+
+A IA generativa (ChatGPT, Fal) é responsável por:
+- Cena central com personagens e cenário
+- Reconstrução de fundo (inpainting)
+- Polish pass final
+
+O app é responsável por:
+- Renderização de texto (sempre nítido, sempre editável)
+- Boxes, divisórias, faixas (vetoriais)
+- Ícones, brasões (vetoriais ou raster transparente)
+- Composição final
+
+Nunca usar IA pra desenhar texto literal numa imagem — sempre overlay.
+
+---
+
 ## Por que mudou
 
 | Antes | Agora |
