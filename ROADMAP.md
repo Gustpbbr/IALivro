@@ -87,6 +87,19 @@
 - [ ] Referências arrastáveis (modelos de edição por referência)
 - [ ] LoRA cartoon do Quarteto pop-up
 
+## ETAPA 4+ — Editor de composição por camadas ⬜ (backlog, upgrade da interface)
+
+Mini-editor visual no navegador: cada personagem é uma camada (figurinha com
+fundo transparente, gerada via LoRA) que o autor arrasta, redimensiona e
+posiciona livremente numa tela; um botão "Harmonizar" faz um passe de IA
+(inpainting/img2img leve) para unificar luz, sombra e bordas — composição
+coesa, não colagem.
+- "Girar" o personagem = trocar pela vista correta do turnaround (não rotacionar
+  pixel) → alimentado diretamente pela **Prancha B** (5 vistas + poses).
+- Tecnologia de harmonização: FLUX Kontext / Qwen-Edit / Nano Banana via API.
+- Não exige novos insumos do autor: reusa as mesmas pranchas e LoRAs.
+- Só depois da interface de chat (Etapa 4) validada.
+
 ---
 
 ## Expectativa de término (estimativas honestas)
