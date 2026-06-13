@@ -1,138 +1,119 @@
-# PLANO — IA de imagem especializada na coleção
+# PLANO v2 — Editor de Composição com Descompilação por IA
 
-> **Para o agente:** este é o plano que o autor quer que você **avalie, atualize e
-> melhore** antes de executar (ver Protocolo de Início no `CLAUDE.md`). Ele foi
-> desenhado com a lógica "começar enxuto e barato, validar, depois escalar". O
-> objetivo e o universo estão em `UNIVERSO.md`; o que reaproveitar, em
-> `INFRAESTRUTURA.md`.
+> **Mudança de rota (13/06/2026):** o foco do projeto passou de "gerar imagens via Fal.ai + LoRAs" para "**editar imagens prontas do ChatGPT em camadas, com auxílio de IA**". A geração de imagem fica no ChatGPT (qualidade superior). O esforço de engenharia vai todo para o editor.
+>
+> O plano anterior (Fases 1-4 com Fal.ai + LoRAs como núcleo) foi arquivado em [`historico/PLANO_v1_geracao_fal.md`](historico/PLANO_v1_geracao_fal.md). Os documentos `UNIVERSO.md`, `INFRAESTRUTURA.md`, `SISTEMA_CORES_COMPLETO_v2.md` e os dois `GUIA_*` continuam válidos.
 
 ---
 
 ## Objetivo
 
-Construir um **Orquestrador de Narrativa Visual**: uma IA de imagem que ilustra os
-capítulos dos 11 livros mantendo **consistência rigorosa** de personagens,
-cenários e estilo (ver `UNIVERSO.md` §2). O autor escreve/cola o trecho do
-capítulo; o sistema gera a ilustração no traço da coleção.
+Construir um **editor web** que aceita uma imagem raster gerada pelo ChatGPT (infográfico, prancha, cena ilustrada com texto e elementos gráficos) e a "explode" em **camadas editáveis**: texto, boxes, ícones, cena de fundo. O autor edita texto, fonte, cor, tamanho de box, paleta — e a IA recompõe a imagem final com qualidade preservada.
+
+A geração inicial das imagens **continua sendo feita no ChatGPT**, alimentada pelas pranchas dos 61 personagens (Etapa A).
 
 ---
 
-## Arquitetura-alvo (híbrida)
+## Por que mudou
+
+| Antes | Agora |
+|---|---|
+| Fal.ai + LoRAs treinados gerariam as imagens | ChatGPT gera; qualidade visual é superior |
+| Consistência via LoRAs treinados em personagens | Consistência via pranchas no prompt do ChatGPT (já funciona) |
+| Editor era a Fase 4 (longe) | Editor vira o **foco principal** |
+| Fal.ai era infra de geração | Fal.ai pode continuar como infra de **modelos auxiliares** (SAM, inpainting, polish pass) |
+
+**O que o ChatGPT erra (e o editor resolve):** boxes, textos, tons de imagem (filtro amarelo recorrente). É exatamente onde a edição pós-geração agrega.
+
+---
+
+## Arquitetura-alvo
 
 ```
-┌───────────────────────────────────────────────┐
-│  AUTOR escreve o trecho do capítulo (PT-BR)    │
-└───────────────────────┬───────────────────────┘
-                        ▼
-┌───────────────────────────────────────────────┐
-│  "DIRETOR DE ARTE" (LLM via chave Anthropic/   │
-│  OpenAI já existentes) → vira prompt técnico,  │
-│  injeta trigger words do estilo + personagens  │
-└───────────────────────┬───────────────────────┘
-                        ▼
-┌───────────────────────────────────────────────┐
-│  MODELO DE IMAGEM na nuvem (Fal.ai/Replicate)  │
-│  base FLUX/SDXL + LoRA de estilo + LoRA persona │
-└───────────────────────┬───────────────────────┘
-                        ▼
-┌───────────────────────────────────────────────┐
-│  Imagem volta → salva em /outputs + R2         │
-└───────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────┐
+│ AUTOR gera a imagem no ChatGPT (com pranchas)    │
+│ → faz upload no editor                            │
+└──────────────────────┬───────────────────────────┘
+                       ▼
+┌──────────────────────────────────────────────────┐
+│ PIPELINE DE DESCOMPILAÇÃO (backend Python)        │
+│  • Vision (Claude/GPT-4V): entende o layout       │
+│  • SAM 2: segmenta formas/ícones/regiões          │
+│  • OCR (PaddleOCR): extrai texto + bbox + estilo  │
+│  • Font matching: identifica fonte mais próxima   │
+│  • Inpainting (Fal.ai): reconstrói fundo limpo    │
+│  → devolve JSON de camadas + assets               │
+└──────────────────────┬───────────────────────────┘
+                       ▼
+┌──────────────────────────────────────────────────┐
+│ EDITOR WEB (frontend canvas/SVG)                  │
+│  • Camadas visíveis e clicáveis                   │
+│  • Edição de texto, fonte, cor, tamanho           │
+│  • Boxes redimensionáveis com cor/borda           │
+│  • Color grading (resolver filtro amarelo)        │
+└──────────────────────┬───────────────────────────┘
+                       ▼
+┌──────────────────────────────────────────────────┐
+│ POLISH PASS (img2img strength baixo)              │
+│  Limpa bordas, integra elementos editados         │
+│  → PNG/PDF final                                  │
+└──────────────────────────────────────────────────┘
 ```
 
-> **Avalie:** os nomes de modelos/serviços abaixo são de meados de 2026 e podem ter
-> evoluído. Verifique o estado da arte (modelo base com melhor consistência +
-> melhor texto-na-imagem, melhor custo de treino) antes de fixar.
+---
+
+## Stack proposta
+
+**Backend:**
+- Python + FastAPI (já planejado)
+- Vision/Layout: Claude (Anthropic API, chave existente)
+- Segmentação: SAM 2 via Fal.ai
+- OCR: PaddleOCR (ou EasyOCR)
+- Inpainting: LaMa ou SD inpaint via Fal.ai
+- Polish pass: FLUX/SDXL img2img via Fal.ai
+
+**Frontend:**
+- Web (mobile + desktop, mesmo código)
+- Canvas editor: **Konva.js** (recomendado) ou Fabric.js
+- SVG pra vetores de boxes/formas
+
+**Infra:**
+- Railway (hospedagem do backend, conta existente)
+- Cloudflare R2 (storage de imagens, conta existente)
 
 ---
 
-## FASE 1 — Validação enxuta (barata, sem interface) ⭐ COMECE AQUI
+## Roadmap
 
-Meta: provar que dá para reproduzir o **estilo** e **1–2 personagens** com
-consistência, gastando ~US$ 10. Sem construir app ainda.
+| Etapa | Status | O quê | Critério de "pronto" |
+|---|---|---|---|
+| **0 — Fundação** | ✅ feita | Docs, briefing, paleta, guias visuais | — |
+| **A — Pranchas v2** | 🔄 em andamento (autor) | 61 fichas no formato v2; servem de input pro ChatGPT | Pranchas João + Leônidas + estilo entregues |
+| **B — POC do pipeline de descompilação** | ⬜ | Script Python que recebe 1 PNG e devolve JSON de camadas + fundo limpo. Sem UI. | JSON identifica textos, boxes, cena com >80% de precisão visual |
+| **C — Editor web (MVP)** | ⬜ | Interface básica: upload, exibir camadas, editar texto/fonte/cor, mover/redimensionar box | Autor consegue editar a imagem de exemplo do ChatGPT |
+| **D — Inpainting & polish generativo** | ⬜ | Reconstrói fundo quando move/remove elemento + pass final pra limpar bordas | Saída final indistinguível de imagem nativa |
+| **E — Color grading** | ⬜ | Controles de temperatura, saturação, tinta (resolve filtro amarelo do ChatGPT) | Autor consegue neutralizar tons em 1 clique |
+| **F — Produção real** | ⬜ | Integrar no fluxo dos 11 livros, exportação PDF, presets por livro | 1 capítulo completo editado de ponta a ponta |
 
-1. **Reunir o dataset.** O autor tem imagens dos **caps 1–5 do Livro 1** (na
-   máquina dele) + 6 imagens de referência no projeto-mãe
-   (`referencia_visual/imagens/`: pranchas de MP, AGU, CNMP, grupo 6). Organizar em:
-   - `/dataset/100_estilo/` — imagens que representam o traço da coleção.
-   - `/dataset/200_<personagem>/` — 10–20 imagens variadas de 1–2 personagens Tier 1
-     (sugestão: **João** e **Leônidas/STF**, os mais centrais).
-2. **Legendar (captions).** Para cada imagem, um `.txt` de mesmo nome com a
-   descrição + **trigger word única** (ex.: `estilo_colecao_xyz`,
-   `joao_cidadao_xyz`). Descrever o que NÃO é identidade (roupa, fundo) para o
-   modelo não grudar isso no personagem.
-3. **Treinar o LoRA de estilo** via API (Fal.ai/Replicate). Custo ~US$ 2–5.
-4. **Gerar testes** de cenas dos caps 1–5 e comparar com as imagens originais:
-   o traço bate? O personagem se mantém? Ajustar captions/peso e re-treinar se
-   preciso.
-5. **Decisão de porteira:** só avançar para a Fase 2 quando a consistência estiver
-   aprovada pelo autor.
+### Backlog / talvez
 
-> Nesta fase **não há servidor ligado** — você (agente) dispara o treino/geração
-> via API e salva os resultados no repo. Custo de hospedagem = zero.
-
-## FASE 2 — Interface (o "ChatGPT ilustrador")
-
-1. **Backend** (Python) que recebe o texto, chama o "diretor de arte" (LLM) para
-   montar o prompt, injeta as trigger words e chama a API de imagem.
-2. **Interface de chat** (Gradio/Streamlit para começar — simples; ou frontend
-   Vercel depois). Barra lateral para escolher personagem em cena e peso do estilo.
-3. **Hospedagem:** reaproveitar a conta **Railway** do autor (ver `INFRAESTRUTURA.md`).
-   Padrão Dockerfile/FastAPI do projeto Gus transplanta direto.
-4. **Storage:** imagens e modelos no **Cloudflare R2**.
-
-## FASE 3 — Consistência avançada e produção em lote
-
-1. **LoRAs dos demais Tier 1** (lista em `UNIVERSO.md` §6), conforme o autor precisar.
-2. **Texto fiel na imagem** (placas, "Livro Dourado", brasões): modelo base com
-   encoder T5 (FLUX/SD3) e, em casos difíceis, **ControlNet de tipografia**.
-3. **Geração em lote:** dado um capítulo, o sistema identifica as cenas-chave (as
-   fichas de handoff e o rastreamento JSON do projeto-mãe ajudam) e gera as imagens
-   nomeadas (`cap06_cena1.png`…) para o autor revisar.
-4. **Coerência por família** e regras de figurino (ver `referencia_visual/`).
-
-## FASE 4 — Melhoria contínua
-
-1. **Feedback 👍/👎** por imagem → pastas `/feedback/positivo` e `/negativo`.
-   Positivos acumulados realimentam re-treinos; negativos viram prompt negativo.
-2. **Referências arrastáveis (IP-Adapter):** o autor solta uma textura/cenário e a
-   IA usa como referência visual (sem copiar).
-3. **Correção pontual (inpainting):** corrigir um pedaço da imagem (letra errada,
-   detalhe) sem regenerar tudo.
-4. **Dataset vivo:** novas pastas (`150_taverna_capX/`) + botão "Atualizar IA".
+- **LoRAs no Fal.ai**: só se ChatGPT API virar caro ou inconsistente em escala
+- **App mobile nativo**: só se a versão web no celular ficar limitada
+- **Editor de composição multi-página**: pra produzir o livro inteiro num único arquivo
+- **Feedback 👍/👎** em cada edição pra realimentar prompts
 
 ---
 
-## Custos esperados (confirmar valores atuais)
+## Princípios
 
-| Item | Quando | Estimativa |
-|---|---|---|
-| Treino de LoRA | por treino | ~US$ 2–5 |
-| Geração de imagem | por imagem | ~US$ 0,03 (FLUX) |
-| Storage R2 | mensal | centavos até GBs |
-| Railway | Fase 2+ | reaproveita conta existente |
-| LLM diretor de arte | por uso | chave já existente |
-| **Pontapé inicial** | único | **~US$ 10 de crédito** |
+1. **Cada etapa entrega algo testável sozinha.** B funciona no terminal antes de C. C funciona sem D.
+2. **Começar pelo backend.** Se a IA não conseguir separar bem as camadas, a UI não importa.
+3. **Web first.** Funciona no celular e no desktop com mesmo código.
+4. **Não inventar consistência.** O ChatGPT + pranchas já resolvem personagens. Não recriar isso à toa.
+5. **Fal.ai vira infra auxiliar.** Não pra gerar do zero — só pra SAM, inpaint e polish.
 
 ---
 
-## Riscos / decisões em aberto (para você endereçar)
+## Próximo passo concreto
 
-- **Onde os modelos/datasets moram** (R2 vs Git LFS vs outro) — decidir cedo.
-- **Modelo base definitivo** (consistência vs texto-na-imagem vs custo) — verificar
-  o estado da arte atual.
-- **Quantos LoRAs de personagem** valem a pena vs prompt+estilo — começar pelos
-  Tier 1 e medir.
-- **Quarteto pop-up** tem estilo cartoon distinto — pode exigir um LoRA de estilo
-  próprio (avaliar).
-- **Bug de push 403** no ambiente do autor — commitar e dar push cedo e frequente
-  (ver `INFRAESTRUTURA.md`).
-
----
-
-## Primeiro passo concreto
-
-Depois de ler os três documentos e fazer a sua autoavaliação crítica (Protocolo de
-Início no `CLAUDE.md`), proponha ao autor o arranque da **Fase 1**: a estrutura de
-pastas do dataset e a lista exata de imagens que ele precisa reunir e subir. Não
-gere custo nem treine nada antes do "ok" dele.
+Iniciar a **Etapa B** com a especificação em [`ETAPA_B_POC_DESCOMPILACAO.md`](ETAPA_B_POC_DESCOMPILACAO.md). Usar a imagem de exemplo do ChatGPT (Constituição + PM/Defensoria Pública) como caso de teste inicial.
