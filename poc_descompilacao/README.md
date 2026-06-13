@@ -1,0 +1,52 @@
+# POC — Descompilação de imagens em camadas
+
+Implementação da **Etapa B** do projeto IALivro. Veja a especificação em [`../ETAPA_B_POC_DESCOMPILACAO.md`](../ETAPA_B_POC_DESCOMPILACAO.md) e o passo a passo em [`../ETAPA_B_PASSO_A_PASSO.md`](../ETAPA_B_PASSO_A_PASSO.md).
+
+## Setup
+
+```bash
+cd poc_descompilacao
+python -m venv .venv
+source .venv/bin/activate    # Windows: .venv\Scripts\activate
+pip install -r requirements.txt
+cp .env.example .env
+# Editar .env com suas chaves
+```
+
+## Uso
+
+```bash
+python descompila.py tests/exemplo_constituicao.png
+```
+
+A saída vai pra `output/`. Cada execução **sobrescreve** a anterior.
+
+## Status dos passos
+
+- [x] Passo 0 — Setup
+- [x] Passo 1 — Carregar imagem
+- [ ] Passo 2 — Análise semântica (Claude)
+- [ ] Passo 3 — OCR
+- [ ] Passo 4 — Reconciliação
+- [ ] Passo 5 — Estilo de texto
+- [ ] Passo 6 — SAM 2
+- [ ] Passo 7 — Inpainting
+- [ ] Passo 8 — Exportação final
+- [ ] Passo 9 — Esquema do JSON congelado
+- [ ] Passo 10 — Validação com mais imagens
+- [ ] Passo 11 — Decisão de porteira
+
+## Estrutura
+
+```
+poc_descompilacao/
+├── descompila.py          # CLI principal
+├── etapas/                # módulos de cada passo
+│   └── __init__.py
+├── prompts/               # prompts pra Claude
+├── tests/                 # imagens de teste (gitignored)
+├── output/                # resultados (gitignored)
+├── requirements.txt
+├── .env.example
+└── README.md
+```
