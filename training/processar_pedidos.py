@@ -34,21 +34,26 @@ def _baixar(url: str, destino: Path) -> None:
 
 
 def smoke_test(pedido: dict, nome: str) -> None:
-    """Gera 1 imagem barata (schnell) e salva em outputs/."""
+    """Gera imagem(ns) sem LoRA. Endpoint padrão = schnell (barato); aceita
+    'endpoint' (ex.: 'fal-ai/flux/dev') e 'num_images' para teste de qualidade."""
+    endpoint = pedido.get("endpoint", "fal-ai/flux/schnell")
+    n = int(pedido.get("num_images", 1))
     resp = requests.post(
-        "https://fal.run/fal-ai/flux/schnell",
+        f"https://fal.run/{endpoint}",
         headers={"Authorization": f"Key {FAL_KEY}", "Content-Type": "application/json"},
         json={
             "prompt": pedido["prompt"],
             "image_size": pedido.get("image_size", {"width": 1024, "height": 1024}),
-            "num_images": 1,
+            "num_images": n,
         },
-        timeout=120,
+        timeout=240,
     )
     resp.raise_for_status()
-    url = resp.json()["images"][0]["url"]
-    _baixar(url, OUTPUTS_DIR / f"{nome}.png")
-    print(f"OK: outputs/{nome}.png")
+    imgs = resp.json()["images"]
+    for i, im in enumerate(imgs, 1):
+        suf = f"_v{i}" if len(imgs) > 1 else ""
+        _baixar(im["url"], OUTPUTS_DIR / f"{nome}{suf}.png")
+    print(f"OK: {len(imgs)} imagem(ns) em outputs/{nome}*  (endpoint={endpoint})")
 
 
 def treino_lora(pedido: dict, nome: str) -> None:
