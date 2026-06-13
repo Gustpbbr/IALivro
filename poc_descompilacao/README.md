@@ -16,8 +16,10 @@ cp .env.example .env
 ## Uso
 
 ```bash
-python descompila.py tests/exemplo_constituicao.png
+python descompila.py tests/imagens/exemplo_constituicao.png
 ```
+
+Imagens versionadas pra teste vão em `tests/imagens/` (no Git). Imagens efêmeras podem ir direto em `tests/` (gitignored).
 
 A saída vai pra `output/`. Cada execução **sobrescreve** a anterior.
 
@@ -44,7 +46,8 @@ poc_descompilacao/
 ├── etapas/                # módulos de cada passo
 │   └── __init__.py
 ├── prompts/               # prompts pra Claude
-├── tests/                 # imagens de teste (gitignored)
+├── tests/
+│   └── imagens/           # imagens versionadas pra teste
 ├── output/                # resultados (gitignored)
 ├── requirements.txt
 ├── .env.example

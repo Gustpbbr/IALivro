@@ -12,6 +12,8 @@ venv/
 # POC
 poc_descompilacao/output/
 poc_descompilacao/tests/*.png
+!poc_descompilacao/tests/imagens/
+!poc_descompilacao/tests/imagens/*.png
 !poc_descompilacao/tests/.gitkeep
 
 # Sistema
