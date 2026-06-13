@@ -1,0 +1,8 @@
+{
+  "imagem": "referencia_visual/pranchas_personagens/prancha_leonidas_constitucional_stf.png",
+  "saida": "dataset/201_leonidas_stf",
+  "trigger": "leonidas_stf_xyz",
+  "recortes": [
+    {"nome": "retrato_hero", "box": [0.095, 0.115, 0.495, 0.50]}
+  ]
+}
