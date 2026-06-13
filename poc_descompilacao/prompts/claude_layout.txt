@@ -1,0 +1,34 @@
+Analise esta imagem (um infográfico ou prancha ilustrada) e identifique cada elemento visual distinto.
+
+Retorne APENAS um objeto JSON válido, sem texto antes ou depois, sem markdown, com esta estrutura exata:
+
+{
+  "dimensoes_imagem": {"largura": <int>, "altura": <int>},
+  "camadas": [
+    {
+      "id": "identificador_descritivo_em_snake_case",
+      "tipo": "texto" | "caixa" | "icone" | "cena" | "linha_divisoria",
+      "conteudo": "texto literal" ou null,
+      "bbox": {"x": <int>, "y": <int>, "w": <int>, "h": <int>},
+      "cor_fundo": "#rrggbb" ou null,
+      "cor_texto": "#rrggbb" ou null,
+      "tamanho_aproximado": "pequeno" | "medio" | "grande" | "titulo",
+      "fonte_classe": "serif" | "sans_serif" | "display" | null,
+      "observacoes": "string descrevendo anomalias visuais (filtro amarelo, bordas ruins, etc)" ou null
+    }
+  ]
+}
+
+Regras CRÍTICAS:
+- bbox em PIXELS absolutos, considerando as dimensões reais da imagem (não use porcentagem)
+- NÃO invente texto. Se não conseguir ler com certeza, deixe "conteudo": null
+- Ordene as camadas por hierarquia visual: títulos primeiro, depois caixas e elementos UI, depois a cena central, fundo por último
+- Identifique caixas/boxes mesmo quando a borda for sutil — use a diferença de cor de fundo
+- Para "caixa", inclua a área TOTAL do box (incluindo texto interno); o texto dentro vira camada separada
+- "cena" é a ilustração principal (personagens + cenário), só uma por imagem
+- "linha_divisoria" são linhas finas ou separadores horizontais/verticais
+- Cores em hex aproximada amostrando da imagem (ex: "#1a3a2b" pra verde escuro)
+- IDs em snake_case descritivo: "titulo_principal", "box_polmilitar", "icone_familia", "cena_central"
+- Cubra TUDO que for visualmente distinto. Esperamos 15-30 camadas pra um infográfico denso.
+
+Comece a resposta diretamente com `{` e termine com `}`.

@@ -25,9 +25,9 @@ A saída vai pra `output/`. Cada execução **sobrescreve** a anterior.
 
 - [x] Passo 0 — Setup
 - [x] Passo 1 — Carregar imagem
-- [ ] Passo 2 — Análise semântica (Claude)
-- [ ] Passo 3 — OCR
-- [ ] Passo 4 — Reconciliação
+- [x] Passo 2 — Análise semântica (Claude)
+- [x] Passo 3 — OCR
+- [x] Passo 4 — Reconciliação
 - [ ] Passo 5 — Estilo de texto
 - [ ] Passo 6 — SAM 2
 - [ ] Passo 7 — Inpainting
