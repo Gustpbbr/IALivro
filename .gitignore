@@ -9,6 +9,9 @@ __pycache__/
 .venv/
 venv/
 
+# Editor backend — fontes baixadas on-demand
+editor/backend/dados/fontes/
+
 # POC
 poc_descompilacao/output/
 poc_descompilacao/tests/*.png

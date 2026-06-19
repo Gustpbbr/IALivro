@@ -1,12 +1,16 @@
 """Armazem em memoria de sessoes (POC). Producao usa R2 + persistencia."""
 
+import io
 from typing import Optional
 from uuid import uuid4
+
+from PIL import Image
 
 from modelos import Documento, Camada, PatchCamada
 
 
 _sessoes: dict[str, Documento] = {}
+_fundos: dict[str, Image.Image] = {}
 
 
 def criar(documento: Documento) -> str:
@@ -17,6 +21,17 @@ def criar(documento: Documento) -> str:
 
 def obter(sid: str) -> Optional[Documento]:
     return _sessoes.get(sid)
+
+
+def salvar_fundo(sid: str, bytes_imagem: bytes) -> bool:
+    if sid not in _sessoes:
+        return False
+    _fundos[sid] = Image.open(io.BytesIO(bytes_imagem))
+    return True
+
+
+def obter_fundo(sid: str) -> Optional[Image.Image]:
+    return _fundos.get(sid)
 
 
 def atualizar_camada(sid: str, cid: str, patch: PatchCamada) -> Optional[Camada]:

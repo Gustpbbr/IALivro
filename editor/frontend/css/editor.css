@@ -57,6 +57,8 @@
   transition: background 120ms;
 }
 .btn-upload:hover { background: var(--acento-claro); }
+.btn-upload.secundario { background: var(--borda); color: var(--texto); margin-top: var(--gap-2); }
+.btn-upload.secundario:hover { background: #4a3f33; }
 .upload-box .dica {
   margin-top: var(--gap-6);
   font-size: var(--font-sm);

@@ -2,12 +2,24 @@
 
 const BASE = "/api";
 
-export async function uploadCamadas(arquivo) {
+export async function uploadCamadas(arquivo, fundo = null) {
   const form = new FormData();
   form.append("arquivo", arquivo);
+  if (fundo) form.append("fundo", fundo);
   const resp = await fetch(`${BASE}/sessao/upload`, { method: "POST", body: form });
   if (!resp.ok) throw new Error(await mensagemErro(resp));
   return resp.json();
+}
+
+export async function exportar(sid, formato = "png") {
+  const resp = await fetch(`${BASE}/sessao/${sid}/exportar?formato=${formato}`, {
+    method: "POST",
+  });
+  if (!resp.ok) throw new Error(await mensagemErro(resp));
+  const blob = await resp.blob();
+  const nome = (resp.headers.get("Content-Disposition") || "").match(/filename="([^"]+)"/)?.[1]
+    || `documento_editado.${formato}`;
+  return { blob, nome };
 }
 
 export async function obterSessao(sid) {
