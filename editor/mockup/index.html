@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Editor IALivro — Mockup</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="logo">IALivro<span class="badge">mockup</span></div>
+    <div class="actions">
+      <button id="btn-toggle-bbox" title="Mostrar/esconder bboxes">👁</button>
+      <button id="btn-exportar" disabled>Exportar</button>
+    </div>
+  </header>
+
+  <main class="palco">
+    <div class="canvas-wrap">
+      <svg id="canvas" viewBox="0 0 1024 1536" preserveAspectRatio="xMidYMid meet">
+        <image id="img-fundo" href="fundo_demo.png" x="0" y="0" width="1024" height="1536"/>
+        <g id="grupo-bbox"></g>
+        <g id="grupo-selecao"></g>
+      </svg>
+    </div>
+  </main>
+
+  <aside class="painel" id="painel">
+    <div class="painel-cabecalho">
+      <span id="painel-titulo">Toque numa camada</span>
+      <button id="painel-fechar" hidden>✕</button>
+    </div>
+    <div class="painel-corpo" id="painel-corpo">
+      <div class="vazio">
+        <p>Toque numa camada da imagem pra editar.</p>
+        <p class="dica">38 camadas detectadas pela IA.</p>
+      </div>
+    </div>
+  </aside>
+
+  <script src="mockup.js"></script>
+</body>
+</html>
