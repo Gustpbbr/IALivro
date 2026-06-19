@@ -60,14 +60,40 @@ async def upload_fundo(sid: str, fundo: UploadFile = File(...)) -> dict:
 
 
 @router.post("/{sid}/exportar")
-def exportar(sid: str, formato: Literal["png", "pdf"] = "png") -> Response:
-    """Renderiza o documento atual e devolve PNG ou PDF."""
+def exportar(
+    sid: str,
+    formato: Literal["png", "pdf"] = "png",
+    modo: Literal["completo", "diff"] = "diff",
+) -> Response:
+    """Renderiza o documento e devolve PNG ou PDF.
+
+    Modos:
+    - diff (padrao): so re-renderiza camadas alteradas, apagando o original com
+      cor_fundo_local. Mantem o resto do fundo intocado. Recomendado quando o
+      fundo enviado eh a imagem original.
+    - completo: re-renderiza TODAS as camadas. Use quando o fundo eh um
+      fundo_limpo de verdade (saida do Passo 7 da POC).
+    """
     documento = armazem.obter(sid)
     if not documento:
         raise HTTPException(404, "Sessao nao encontrada")
 
     fundo = armazem.obter_fundo(sid)
-    imagem = renderizar.renderizar(documento, fundo=fundo)
+
+    if modo == "diff":
+        ids_alterados = armazem.camadas_alteradas(sid)
+        originais = {
+            cid: armazem.obter_original(sid, cid)
+            for cid in ids_alterados
+            if armazem.obter_original(sid, cid)
+        }
+        imagem = renderizar.renderizar(
+            documento, fundo=fundo, modo="diff",
+            originais=originais, ids_alterados=ids_alterados,
+        )
+    else:
+        imagem = renderizar.renderizar(documento, fundo=fundo, modo="completo")
+
     bytes_saida = renderizar.exportar_bytes(imagem, formato)
 
     mime = "image/png" if formato == "png" else "application/pdf"
