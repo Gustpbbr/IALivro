@@ -11,16 +11,45 @@ from modelos import Documento, Camada, PatchCamada
 
 _sessoes: dict[str, Documento] = {}
 _fundos: dict[str, Image.Image] = {}
+_originais: dict[str, dict[str, dict]] = {}  # sid -> {camada_id: snapshot_dict}
 
 
 def criar(documento: Documento) -> str:
     sid = uuid4().hex[:12]
     _sessoes[sid] = documento
+    # snapshot por id pra comparar depois
+    _originais[sid] = {c.id: c.model_dump() for c in documento.camadas}
     return sid
 
 
 def obter(sid: str) -> Optional[Documento]:
     return _sessoes.get(sid)
+
+
+def obter_original(sid: str, cid: str) -> Optional[dict]:
+    return _originais.get(sid, {}).get(cid)
+
+
+def camadas_alteradas(sid: str) -> list[str]:
+    doc = _sessoes.get(sid)
+    snaps = _originais.get(sid)
+    if not doc or not snaps:
+        return []
+    mudados = []
+    ids_atuais = set()
+    for c in doc.camadas:
+        ids_atuais.add(c.id)
+        original = snaps.get(c.id)
+        if original is None:
+            mudados.append(c.id)  # nova
+            continue
+        if c.model_dump() != original:
+            mudados.append(c.id)
+    # tambem retorna ids que foram removidos
+    for cid_orig in snaps:
+        if cid_orig not in ids_atuais:
+            mudados.append(cid_orig)
+    return mudados
 
 
 def salvar_fundo(sid: str, bytes_imagem: bytes) -> bool:

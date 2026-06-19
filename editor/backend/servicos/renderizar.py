@@ -2,11 +2,16 @@
 
 Sub-etapa C9 do ETAPA_C_ARQUITETURA.md. Backend renderiza pra garantir
 qualidade e fontes identicas independente do dispositivo do autor.
+
+Dois modos:
+- 'completo': re-renderiza TODAS as camadas (assume fundo limpo da Etapa B)
+- 'diff':    so re-renderiza camadas alteradas, apagando o original com
+              cor_fundo_local. Resto do fundo permanece intocado.
 """
 
 import io
 from pathlib import Path
-from typing import Literal
+from typing import Literal, Optional
 
 from PIL import Image, ImageDraw
 
@@ -15,10 +20,25 @@ from servicos import fontes
 
 
 Formato = Literal["png", "pdf"]
+Modo = Literal["completo", "diff"]
+
+ORDEM_RENDER = ["cena", "caixa", "linha_divisoria", "icone", "texto"]
 
 
-def renderizar(documento: Documento, fundo: Image.Image | None = None) -> Image.Image:
-    """Compoe imagem final: fundo + camadas em ordem de empilhamento."""
+def renderizar(
+    documento: Documento,
+    fundo: Image.Image | None = None,
+    modo: Modo = "completo",
+    originais: Optional[dict[str, dict]] = None,
+    ids_alterados: Optional[list[str]] = None,
+) -> Image.Image:
+    """Compoe imagem final.
+
+    Modo 'completo': re-renderiza tudo (precisa fundo limpo).
+    Modo 'diff': apaga camadas alteradas do fundo (com cor_fundo_local) e
+                 re-renderiza so as alteradas. Camadas intactas ficam como
+                 no fundo original.
+    """
     largura, altura = documento.dimensoes.largura, documento.dimensoes.altura
 
     if fundo is None:
@@ -26,26 +46,80 @@ def renderizar(documento: Documento, fundo: Image.Image | None = None) -> Image.
     else:
         canvas = fundo.convert("RGBA").resize((largura, altura), Image.LANCZOS)
 
-    # Ordem de render (mais ao fundo primeiro):
-    # cena -> caixa -> linha_divisoria -> icone -> texto
-    ordem = ["cena", "caixa", "linha_divisoria", "icone", "texto"]
-    ordenadas = sorted(
-        documento.camadas, key=lambda c: ordem.index(c.tipo) if c.tipo in ordem else 99
-    )
+    if modo == "diff":
+        return _renderizar_diff(canvas, documento, originais or {}, ids_alterados or [])
+    return _renderizar_completo(canvas, documento)
 
+
+def _renderizar_completo(canvas: Image.Image, documento: Documento) -> Image.Image:
+    ordenadas = sorted(
+        documento.camadas, key=lambda c: ORDEM_RENDER.index(c.tipo) if c.tipo in ORDEM_RENDER else 99
+    )
     for camada in ordenadas:
-        if camada.tipo == "cena":
-            continue  # ja esta no fundo
-        elif camada.tipo == "caixa":
-            _renderizar_caixa(canvas, camada)
-        elif camada.tipo == "linha_divisoria":
-            _renderizar_linha(canvas, camada)
-        elif camada.tipo == "icone":
-            _renderizar_icone(canvas, camada)
-        elif camada.tipo == "texto":
-            _renderizar_texto(canvas, camada)
+        _renderizar_camada(canvas, camada)
+    return canvas.convert("RGB")
+
+
+def _renderizar_diff(
+    canvas: Image.Image,
+    documento: Documento,
+    originais: dict[str, dict],
+    ids_alterados: list[str],
+) -> Image.Image:
+    """1. Apaga regiao original de cada camada alterada/removida (pinta com cor_fundo_local).
+    2. Redesenha versao atual das camadas alteradas (camadas removidas nao sao redesenhadas).
+    """
+    atuais_por_id = {c.id: c for c in documento.camadas}
+
+    # 1. Apagar regioes originais das camadas alteradas/removidas
+    for cid in ids_alterados:
+        original = originais.get(cid)
+        if not original:
+            continue  # camada nova (sem original) — nada a apagar
+        _apagar_regiao(canvas, original)
+
+    # 2. Re-renderizar camadas alteradas (que ainda existem) na ordem certa
+    alteradas_atuais = [c for c in documento.camadas if c.id in ids_alterados]
+    alteradas_atuais.sort(
+        key=lambda c: ORDEM_RENDER.index(c.tipo) if c.tipo in ORDEM_RENDER else 99
+    )
+    for camada in alteradas_atuais:
+        _renderizar_camada(canvas, camada)
 
     return canvas.convert("RGB")
+
+
+def _apagar_regiao(canvas: Image.Image, original_dict: dict) -> None:
+    """Pinta um retangulo da cor amostrada do fundo local sobre o bbox original.
+
+    Funciona bem em fundos planos (boxes do infografico). Em fundos texturizados,
+    deixa marca visivel — caso pra inpainting de verdade (Etapa D).
+    """
+    bbox = original_dict.get("bbox") or {}
+    cor_fundo_local = (
+        (original_dict.get("estilo") or {}).get("cor_fundo_local")
+        or original_dict.get("cor_fundo_local")
+    )
+    if not bbox or not cor_fundo_local:
+        return
+    cor = _hex_para_rgba(cor_fundo_local)
+    draw = ImageDraw.Draw(canvas)
+    x1, y1 = bbox["x"], bbox["y"]
+    x2, y2 = x1 + bbox["w"], y1 + bbox["h"]
+    draw.rectangle([x1, y1, x2, y2], fill=cor)
+
+
+def _renderizar_camada(canvas: Image.Image, camada: Camada) -> None:
+    if camada.tipo == "cena":
+        return
+    if camada.tipo == "caixa":
+        _renderizar_caixa(canvas, camada)
+    elif camada.tipo == "linha_divisoria":
+        _renderizar_linha(canvas, camada)
+    elif camada.tipo == "icone":
+        _renderizar_icone(canvas, camada)
+    elif camada.tipo == "texto":
+        _renderizar_texto(canvas, camada)
 
 
 def exportar_bytes(canvas: Image.Image, formato: Formato) -> bytes:
