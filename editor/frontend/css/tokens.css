@@ -1,0 +1,53 @@
+/* tokens.css — Design system do Editor IALivro (ETAPA_C_DESIGN.md §9) */
+
+:root {
+  /* Cores UI (chrome) */
+  --bg: #1a1614;
+  --painel-bg: #2a2218;
+  --borda: #3a302a;
+  --texto: #e8e0d0;
+  --texto-fraco: #a89b87;
+  --acento: #c9a961;
+  --acento-claro: #f0d89a;
+
+  /* Semânticas */
+  --ok: #4ade80;
+  --aviso: #facc15;
+  --erro: #f87171;
+  --info: #60a5fa;
+
+  /* Bbox por tipo */
+  --cor-texto-bbox: #4ade80;
+  --cor-caixa-bbox: #60a5fa;
+  --cor-icone-bbox: #fb923c;
+  --cor-cena-bbox: #ec4899;
+  --cor-linha-bbox: #facc15;
+
+  /* Tipografia */
+  --font-ui: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-xs: 11px;
+  --font-sm: 13px;
+  --font-base: 15px;
+  --font-md: 17px;
+  --font-lg: 20px;
+
+  /* Espaçamento */
+  --gap-1: 4px;
+  --gap-2: 8px;
+  --gap-3: 12px;
+  --gap-4: 16px;
+  --gap-6: 24px;
+  --gap-8: 32px;
+
+  /* Raio */
+  --raio-sm: 4px;
+  --raio-md: 6px;
+  --raio-lg: 12px;
+
+  /* Sombra */
+  --sombra-suave: 0 2px 6px rgba(0,0,0,0.3);
+  --sombra-forte: 0 4px 20px rgba(0,0,0,0.5);
+
+  /* Cor do livro atual (define dinamicamente em JS) */
+  --livro-cor: #B8860B;
+}

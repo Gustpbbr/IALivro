@@ -3,16 +3,38 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Editor IALivro — Mockup</title>
+  <title>Editor IALivro</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Work+Sans:wght@500;600&family=Cormorant+Garamond:wght@400;600&family=Source+Serif+Pro:wght@400;600&family=Cinzel:wght@500;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/editor.css">
 </head>
 <body>
-  <header class="topbar">
+
+  <!-- TELA INICIAL: upload -->
+  <div id="tela-upload" class="tela-upload">
+    <div class="upload-box">
+      <h1>Editor IALivro</h1>
+      <p class="subtitulo">Carregue o <code>camadas.json</code> da Etapa B pra começar a editar.</p>
+
+      <label for="input-arquivo" class="btn-upload">
+        Escolher arquivo
+        <input type="file" id="input-arquivo" accept=".json" hidden>
+      </label>
+
+      <p class="dica">
+        Ainda não tem um <code>camadas.json</code>?
+        Rode a POC de descompilação em <code>poc_descompilacao/</code>
+        ou use o exemplo do mockup.
+      </p>
+    </div>
+  </div>
+
+  <!-- TELA EDITOR: aparece depois do upload -->
+  <header class="topbar" hidden id="topbar">
     <div class="topbar-esq">
-      <div class="logo">IALivro<span class="badge">mockup</span></div>
+      <div class="logo">IALivro</div>
       <div class="seletor-livro">
         <label for="sel-livro" class="seletor-livro-label">Livro</label>
         <select id="sel-livro" class="seletor-livro-select">
@@ -38,17 +60,16 @@
     </div>
   </header>
 
-  <main class="palco">
+  <main class="palco" hidden id="palco">
     <div class="canvas-wrap">
       <svg id="canvas" viewBox="0 0 1024 1536" preserveAspectRatio="xMidYMid meet">
-        <image id="img-fundo" href="fundo_demo.png" x="0" y="0" width="1024" height="1536"/>
+        <image id="img-fundo" x="0" y="0" width="1024" height="1536"/>
         <g id="grupo-bbox"></g>
-        <g id="grupo-selecao"></g>
       </svg>
     </div>
   </main>
 
-  <aside class="painel" id="painel">
+  <aside class="painel" hidden id="painel">
     <div class="painel-cabecalho">
       <span id="painel-titulo">Toque numa camada</span>
       <button id="painel-fechar" class="btn-icone" hidden>✕</button>
@@ -56,13 +77,12 @@
     <div class="painel-corpo" id="painel-corpo">
       <div class="vazio">
         <p>Toque numa camada da imagem pra editar.</p>
-        <p class="dica">38 camadas detectadas pela IA.</p>
       </div>
     </div>
   </aside>
 
   <div id="toasts" class="toasts"></div>
 
-  <script src="mockup.js"></script>
+  <script type="module" src="js/editor.js"></script>
 </body>
 </html>
