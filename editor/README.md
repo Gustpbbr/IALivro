@@ -61,10 +61,12 @@ Acessar: `http://localhost:8000/`
 
 | Método | Rota | Função |
 |---|---|---|
-| `POST` | `/api/sessao/upload` | Recebe multipart com `camadas.json`, retorna `sessao_id` |
+| `POST` | `/api/sessao/upload` | Recebe multipart com `arquivo` (json) + `fundo` (PNG opcional), retorna `sessao_id` |
+| `POST` | `/api/sessao/{sid}/fundo` | Anexa fundo depois |
 | `GET` | `/api/sessao/{sid}` | Estado atual do documento |
 | `PATCH` | `/api/sessao/{sid}/camada/{cid}` | Atualiza campos da camada (merge) |
 | `DELETE` | `/api/sessao/{sid}/camada/{cid}?modo=simples\|refazer\|estender` | Apaga camada |
+| `POST` | `/api/sessao/{sid}/exportar?formato=png\|pdf` | Renderiza com Pillow e devolve PNG ou PDF |
 | `GET` | `/api/saude` | Healthcheck |
 
 Docs interativas: `http://localhost:8000/docs`
@@ -76,7 +78,18 @@ Docs interativas: `http://localhost:8000/docs`
 | C6 — Apagar 🟢 simples | ✅ feito | — |
 | C7 — Apagar 🟡 refazer | ⬜ | Fal disponível (Actions) |
 | C8 — Apagar 🔵 estender | ⬜ | Fal disponível |
-| C9 — Exportação PNG/PDF | ⬜ | renderizar.py no backend |
+| C9 — Exportação PNG/PDF | ✅ feito | — |
 | C10 — Histórico/undo | ⬜ | armazem com versões |
 | C11 — Catálogo fontes refinado | ⬜ | uso real |
 | C12 — Color grading (E) | ⬜ | escopo Etapa E |
+
+## Renderização (C9)
+
+Backend renderiza com Pillow:
+
+- Fundo: PNG opcional enviado no upload (sem fundo, usa branco)
+- Camadas em ordem: cena → caixa → linha → ícone → texto
+- Caixas: `ImageDraw.rounded_rectangle` com fill, outline, raio do canto
+- Textos: fonte do catálogo (`servicos/fontes.py`), baixada do Google Fonts on-demand pra `editor/backend/dados/fontes/` (gitignored), fallback `DejaVuSans`
+- Ícones: paste do `arquivo_recorte` da camada (Etapa B)
+- Saída: PNG ou PDF via parâmetro de query

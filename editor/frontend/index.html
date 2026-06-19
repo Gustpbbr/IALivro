@@ -19,9 +19,17 @@
       <p class="subtitulo">Carregue o <code>camadas.json</code> da Etapa B pra começar a editar.</p>
 
       <label for="input-arquivo" class="btn-upload">
-        Escolher arquivo
+        <span id="label-json">Escolher <code>camadas.json</code></span>
         <input type="file" id="input-arquivo" accept=".json" hidden>
       </label>
+
+      <label for="input-fundo" class="btn-upload secundario">
+        <span id="label-fundo">Escolher fundo (opcional)</span>
+        <input type="file" id="input-fundo" accept="image/png,image/jpeg" hidden>
+      </label>
+      <p id="fundo-info" class="dica">Sem fundo: editor usa branco. Com fundo: a imagem real entra por baixo das camadas.</p>
+
+      <button id="btn-iniciar" class="btn-primario" disabled style="margin-top: var(--gap-4);">Iniciar edição</button>
 
       <p class="dica">
         Ainda não tem um <code>camadas.json</code>?

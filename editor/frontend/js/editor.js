@@ -12,14 +12,43 @@ import { toast } from "./toast.js";
 // FLUXO PRINCIPAL
 // ============================================================
 
-async function iniciarSessao(arquivo) {
+let _arquivoJson = null;
+let _arquivoFundo = null;
+
+async function iniciarSessao() {
+  if (!_arquivoJson) {
+    toast("Escolha um camadas.json primeiro.", "aviso");
+    return;
+  }
   try {
-    const { sessao_id, documento } = await api.uploadCamadas(arquivo);
+    const { sessao_id, documento } = await api.uploadCamadas(_arquivoJson, _arquivoFundo);
     definirDocumento(sessao_id, documento);
     aoEntrarNoEditor();
-    toast("Documento carregado.", "sucesso");
+    toast(
+      _arquivoFundo ? "Documento e fundo carregados." : "Documento carregado (fundo branco).",
+      "sucesso"
+    );
   } catch (err) {
     toast(`Erro ao carregar: ${err.message}`, "erro");
+  }
+}
+
+async function onExportar(formato = "png") {
+  if (!estado.sessaoId) return;
+  toast(`Renderizando ${formato.toUpperCase()}...`, "info");
+  try {
+    const { blob, nome } = await api.exportar(estado.sessaoId, formato);
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = nome;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    toast(`${formato.toUpperCase()} exportado.`, "sucesso");
+  } catch (err) {
+    toast(`Erro ao exportar: ${err.message}`, "erro");
   }
 }
 
@@ -33,6 +62,7 @@ function aoEntrarNoEditor() {
   renderizarBboxes(estado.documento, onSelecionar);
   renderizarPainel(null);
   atualizarCorLivro();
+  document.getElementById("btn-exportar").disabled = false;
 }
 
 function configurarCanvas() {
@@ -43,8 +73,11 @@ function configurarCanvas() {
   const img = document.getElementById("img-fundo");
   img.setAttribute("width", largura);
   img.setAttribute("height", altura);
-  // Sem backend de assets ainda — usa o fundo_limpo do mockup como placeholder.
-  img.setAttribute("href", "/static/fundo_demo.png");
+  if (_arquivoFundo) {
+    img.setAttribute("href", URL.createObjectURL(_arquivoFundo));
+  } else {
+    img.setAttribute("href", "");
+  }
 }
 
 function onSelecionar(cid) {
@@ -100,9 +133,23 @@ function atualizarCorLivro() {
 // ============================================================
 
 document.getElementById("input-arquivo").addEventListener("change", (e) => {
-  const arquivo = e.target.files[0];
-  if (arquivo) iniciarSessao(arquivo);
+  _arquivoJson = e.target.files[0] || null;
+  document.getElementById("btn-iniciar").disabled = !_arquivoJson;
+  if (_arquivoJson) {
+    document.getElementById("label-json").textContent = `✓ ${_arquivoJson.name}`;
+  }
 });
+
+document.getElementById("input-fundo").addEventListener("change", (e) => {
+  _arquivoFundo = e.target.files[0] || null;
+  if (_arquivoFundo) {
+    document.getElementById("label-fundo").textContent = `✓ ${_arquivoFundo.name}`;
+  }
+});
+
+document.getElementById("btn-iniciar").addEventListener("click", iniciarSessao);
+
+document.getElementById("btn-exportar").addEventListener("click", () => onExportar("png"));
 
 document.getElementById("btn-toggle-bbox").addEventListener("click", () => {
   estado.bboxVisivel = !estado.bboxVisivel;
